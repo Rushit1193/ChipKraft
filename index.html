@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>ChipKraft — Build, Download & Manufacture PCB in One Platform</title>
+<meta name="description" content="ChipKraft helps engineers create accurate PCB footprints, browse component libraries, and manufacture PCBs with expert precision." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --bg:#0A0F1E;
+  --bg-2:#0E1426;
+  --surface:#111827;
+  --surface-2:#151d33;
+  --border:#1f2a44;
+  --border-2:#243150;
+  --text:#E8EDF5;
+  --text-muted:#94a3b8;
+  --heading:#ffffff;
+  --accent:#00E5CC;
+  --accent-2:#00b8a5;
+  --amber:#F59E0B;
+  --danger:#ef4444;
+  --radius:14px;
+  --radius-sm:10px;
+  --maxw:1200px;
+  --shadow-glow:0 0 0 1px rgba(0,229,204,.25),0 10px 40px -10px rgba(0,229,204,.35);
+  --font-mono:'Space Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans:'DM Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font-sans);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+
+h1,h2,h3,h4{font-family:var(--font-mono);color:var(--heading);letter-spacing:-.01em;line-height:1.15}
+h1{font-size:clamp(2rem,4.6vw,3.6rem);font-weight:700}
+h2{font-size:clamp(1.6rem,3vw,2.4rem);font-weight:700}
+h3{font-size:1.15rem;font-weight:700}
+p{color:var(--text-muted)}
+
+.container{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 22px;border-radius:999px;
+  font-weight:600;font-size:.95rem;
+  transition:all .25s ease;white-space:nowrap;
+  border:1px solid transparent;
+}
+.btn .arrow{transition:transform .25s ease}
+.btn:hover .arrow{transform:translateX(4px)}
+.btn-primary{
+  background:var(--accent);color:#04221e;
+  box-shadow:0 0 0 0 rgba(0,229,204,.6);
+}
+.btn-primary:hover{
+  background:#1ff0d8;
+  box-shadow:0 0 30px rgba(0,229,204,.55),0 0 0 4px rgba(0,229,204,.15);
+  transform:translateY(-1px);
+}
+.btn-ghost{
+  background:transparent;color:var(--accent);
+  border:1px solid rgba(0,229,204,.45);
+}
+.btn-ghost:hover{
+  background:rgba(0,229,204,.08);
+  border-color:var(--accent);
+  box-shadow:0 0 22px rgba(0,229,204,.25);
+}
+.btn-lg{padding:16px 28px;font-size:1rem}
+
+/* ---------- Navbar ---------- */
+.nav{
+  position:sticky;top:0;z-index:1000;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  background:rgba(10,15,30,.72);
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;height:72px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--font-mono);font-weight:700;color:#fff;font-size:1.15rem}
+.logo .diamond{
+  width:18px;height:18px;display:inline-block;transform:rotate(45deg);
+  background:linear-gradient(135deg,var(--accent),#0bbfa6);
+  border-radius:3px;
+  box-shadow:0 0 14px rgba(0,229,204,.55);
+}
+.nav-links{display:flex;align-items:center;gap:30px}
+.nav-links a{color:var(--text-muted);font-size:.93rem;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:#fff}
+.nav-cta{display:flex;align-items:center;gap:14px}
+.hamburger{display:none;width:42px;height:42px;border:1px solid var(--border);border-radius:10px;align-items:center;justify-content:center}
+.hamburger span{width:18px;height:2px;background:#fff;position:relative;display:block}
+.hamburger span::before,.hamburger span::after{content:"";position:absolute;width:18px;height:2px;background:#fff;left:0;transition:transform .25s}
+.hamburger span::before{top:-6px}
+.hamburger span::after{top:6px}
+.nav.open .hamburger span{background:transparent}
+.nav.open .hamburger span::before{transform:translateY(6px) rotate(45deg)}
+.nav.open .hamburger span::after{transform:translateY(-6px) rotate(-45deg)}
+
+/* ---------- Hero ---------- */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;
+  padding:80px 0 60px;
+  overflow:hidden;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(0,229,204,.10), transparent 60%),
+    radial-gradient(900px 500px at 0% 100%, rgba(245,158,11,.05), transparent 60%),
+    var(--bg);
+}
+.hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,229,204,.06) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(90deg, rgba(0,229,204,.06) 0 1px, transparent 1px 60px);
+  mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 80%);
+}
+.hero::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(circle, rgba(0,229,204,.6) 1.4px, transparent 2px),
+    radial-gradient(circle, rgba(245,158,11,.5) 1.2px, transparent 2px);
+  background-position: 60px 120px, 300px 380px;
+  background-size: 600px 600px, 700px 700px;
+  background-repeat:repeat;
+  opacity:.35;
+  filter:blur(.3px);
+}
+.hero-grid{
+  position:relative;z-index:1;
+  display:grid;grid-template-columns:1.15fr .85fr;gap:60px;align-items:center;
+}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-family:var(--font-mono);font-size:.78rem;
+  color:var(--accent);
+  padding:6px 12px;border-radius:999px;
+  background:rgba(0,229,204,.08);
+  border:1px solid rgba(0,229,204,.25);
+  margin-bottom:22px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+.hero h1 span{color:var(--accent)}
+.hero p.lead{font-size:1.1rem;margin:18px 0 30px;max-width:560px;color:#b3bdd1}
+.hero-ctas{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:36px}
+.trust-bar{display:flex;flex-wrap:wrap;gap:14px 28px;color:var(--text-muted);font-size:.88rem}
+.trust-bar span{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-mono)}
+.trust-bar svg{width:14px;height:14px;color:var(--accent)}
+
+/* PCB illustration */
+.pcb-illo{position:relative;display:flex;align-items:center;justify-content:center;animation:float 6s ease-in-out infinite;will-change:transform}
+@keyframes float{0%,100%{transform:translateY(-6px)}50%{transform:translateY(6px)}}
+.pcb-illo svg{filter:drop-shadow(0 0 30px rgba(0,229,204,.35)) drop-shadow(0 0 60px rgba(0,229,204,.15))}
+
+/* ---------- Sections ---------- */
+section{padding:100px 0;position:relative}
+.section-head{text-align:center;max-width:720px;margin:0 auto 56px}
+.section-head h2{margin-bottom:14px}
+.section-head p{font-size:1.05rem}
+
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease, transform .7s ease}
+.reveal.visible{opacity:1;transform:none}
+
+/* ---------- Features grid ---------- */
+.features{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:22px;
+}
+.feature-card{
+  background:linear-gradient(180deg,var(--surface),#0e1528);
+  border:1px solid var(--border);
+  border-left:3px solid var(--accent);
+  border-radius:var(--radius);
+  padding:28px 24px;
+  transition:transform .25s ease, box-shadow .25s ease, border-color .25s;
+}
+.feature-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 12px 40px -15px rgba(0,229,204,.45);
+  border-color:rgba(0,229,204,.4);
+}
+.feat-icon{
+  width:46px;height:46px;border-radius:12px;
+  background:rgba(0,229,204,.10);
+  color:var(--accent);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:18px;
+  border:1px solid rgba(0,229,204,.25);
+}
+.feature-card h3{margin-bottom:8px;color:#fff}
+.feature-card p{font-size:.94rem}
+
+/* ---------- Footprint builder ---------- */
+.builder{background:linear-gradient(180deg,var(--bg),var(--bg-2))}
+.builder-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:36px;align-items:stretch}
+.builder-cards{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.mode-card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:26px 22px;
+  display:flex;flex-direction:column;
+  position:relative;
+  transition:transform .25s, box-shadow .25s;
+}
+.mode-card:hover{transform:translateY(-3px);box-shadow:0 14px 40px -18px rgba(0,229,204,.4)}
+.mode-card .badge{
+  position:absolute;top:18px;right:18px;
+  font-family:var(--font-mono);font-size:.68rem;font-weight:700;letter-spacing:.08em;
+  padding:5px 9px;border-radius:6px;
+}
+.badge-fast{background:rgba(0,229,204,.15);color:var(--accent);border:1px solid rgba(0,229,204,.35)}
+.badge-adv{background:rgba(245,158,11,.15);color:var(--amber);border:1px solid rgba(245,158,11,.35)}
+.mode-icon{
+  width:48px;height:48px;border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(255,255,255,.04);border:1px solid var(--border);
+  color:var(--accent);font-size:1.4rem;font-family:var(--font-mono);
+  margin-bottom:18px;
+}
+.mode-card.adv .mode-icon{color:var(--amber)}
+.mode-card h3{margin-bottom:6px}
+.mode-card p.desc{font-size:.92rem;margin-bottom:16px}
+.steps{list-style:none;display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.steps li{display:flex;gap:10px;font-size:.9rem;color:#cfd6e6}
+.steps li::before{content:"✓";color:var(--accent);font-weight:700;flex-shrink:0}
+.mode-card.adv .steps li::before{color:var(--amber)}
+.tag{
+  margin-top:auto;font-size:.8rem;color:var(--text-muted);font-family:var(--font-mono);
+  padding-top:14px;border-top:1px dashed var(--border);
+}
+
+.export-panel{
+  background:linear-gradient(160deg, rgba(0,229,204,.08), rgba(245,158,11,.04)), var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:32px 28px;
+  display:flex;flex-direction:column;justify-content:center;
+}
+.export-panel h3{font-size:1.3rem;margin-bottom:10px}
+.export-panel p{font-size:.95rem;margin-bottom:22px}
+.format-pills{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:24px}
+.pill{
+  font-family:var(--font-mono);font-size:.82rem;
+  padding:7px 14px;border-radius:999px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border-2);
+  color:#fff;
+}
+
+.stats{
+  margin-top:60px;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:20px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:32px 24px;
+}
+.stat{text-align:center}
+.stat .num{font-family:var(--font-mono);font-size:2rem;font-weight:700;color:var(--accent);line-height:1.1}
+.stat .label{font-size:.85rem;color:var(--text-muted);margin-top:6px}
+
+/* ---------- Why ---------- */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:var(--surface)}
+.why-card{padding:32px 24px;border-right:1px solid var(--border)}
+.why-card:last-child{border-right:none}
+.why-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(0,229,204,.1);color:var(--accent);margin-bottom:16px}
+.why-card h3{font-size:1.05rem;margin-bottom:8px}
+.why-card p{font-size:.9rem}
+
+/* ---------- Manufacturing ---------- */
+.pcb-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:48px}
+.pcb-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px 24px;position:relative;transition:transform .25s, box-shadow .25s;
+}
+.pcb-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px -18px rgba(0,229,204,.45)}
+.pcb-card.popular{border-color:rgba(0,229,204,.5)}
+.popular-badge{
+  position:absolute;top:-11px;left:24px;
+  background:var(--accent);color:#04221e;
+  font-family:var(--font-mono);font-size:.7rem;font-weight:700;letter-spacing:.08em;
+  padding:4px 10px;border-radius:6px;
+}
+.pcb-card h3{margin:14px 0 8px}
+.pcb-card .specs{margin-top:14px;font-size:.85rem;color:var(--text-muted);font-family:var(--font-mono);display:flex;flex-direction:column;gap:4px}
+.pcb-icon{width:48px;height:48px;border-radius:12px;background:rgba(0,229,204,.1);color:var(--accent);display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,229,204,.25)}
+
+.spec-table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:32px}
+.spec-table th,.spec-table td{padding:16px 22px;text-align:left;border-bottom:1px solid var(--border);font-size:.94rem}
+.spec-table th{background:#0e1528;color:var(--accent);font-family:var(--font-mono);font-weight:700;font-size:.82rem;letter-spacing:.05em;text-transform:uppercase}
+.spec-table tr:last-child td{border-bottom:none}
+.spec-table td:first-child{color:#fff;font-weight:500}
+.cta-row{text-align:center}
+
+/* ---------- Quote banner ---------- */
+.quote-banner{
+  background:
+    linear-gradient(135deg, rgba(0,229,204,.18), rgba(0,229,204,.02) 60%),
+    var(--surface);
+  border:1px solid rgba(0,229,204,.3);
+  border-radius:20px;
+  padding:60px 40px;text-align:center;
+  position:relative;overflow:hidden;
+}
+.quote-banner::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,229,204,.05) 0 1px, transparent 1px 40px),
+    repeating-linear-gradient(90deg, rgba(0,229,204,.05) 0 1px, transparent 1px 40px);
+  mask-image:radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  -webkit-mask-image:radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+.quote-banner > *{position:relative}
+.quote-banner h2{margin-bottom:12px}
+.quote-banner p{margin-bottom:26px;font-size:1.05rem}
+.quote-banner .note{font-size:.85rem;color:var(--text-muted);margin-top:18px;font-family:var(--font-mono)}
+
+/* ---------- About ---------- */
+.about-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:60px;align-items:center}
+.about-grid h2{margin-bottom:18px}
+.about-grid p{font-size:1.05rem;margin-bottom:18px;color:#cfd6e6}
+.learn-link{color:var(--accent);font-weight:600;display:inline-flex;align-items:center;gap:6px}
+.about-list{list-style:none;display:flex;flex-direction:column;gap:18px}
+.about-list li{display:flex;align-items:center;gap:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px}
+.about-list .ico{width:42px;height:42px;border-radius:10px;background:rgba(0,229,204,.1);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.about-list strong{color:#fff;display:block;margin-bottom:2px}
+.about-list span{font-size:.88rem;color:var(--text-muted)}
+
+/* ---------- Blog ---------- */
+.blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:36px}
+.blog-card{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:26px 24px;transition:transform .25s, box-shadow .25s, border-color .25s;
+  display:flex;flex-direction:column;
+}
+.blog-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px -18px rgba(0,229,204,.35);border-color:rgba(0,229,204,.3)}
+.cat-badge{
+  display:inline-block;font-family:var(--font-mono);font-size:.7rem;letter-spacing:.06em;
+  padding:4px 10px;border-radius:6px;background:rgba(0,229,204,.12);color:var(--accent);
+  margin-bottom:16px;align-self:flex-start;text-transform:uppercase;
+}
+.blog-card h3{font-size:1.1rem;margin-bottom:10px;line-height:1.35}
+.blog-card .excerpt{font-size:.92rem;margin-bottom:16px;flex:1}
+.blog-meta{font-size:.78rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:auto;padding-top:14px;border-top:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center}
+.read-more{color:var(--accent);font-weight:600;font-size:.88rem}
+
+/* ---------- Contact ---------- */
+.contact-grid{display:grid;grid-template-columns:1fr 1.3fr;gap:50px}
+.contact-info h2{margin-bottom:14px}
+.contact-info > p{margin-bottom:30px}
+.contact-list{list-style:none;display:flex;flex-direction:column;gap:16px;margin-bottom:30px}
+.contact-list li{display:flex;align-items:center;gap:14px}
+.contact-list .ico{width:40px;height:40px;border-radius:10px;background:rgba(0,229,204,.08);color:var(--accent);display:flex;align-items:center;justify-content:center;border:1px solid var(--border);flex-shrink:0}
+.contact-list strong{color:#fff;display:block;font-size:.85rem;font-family:var(--font-mono)}
+.contact-list span{color:var(--text-muted);font-size:.95rem}
+.socials{display:flex;gap:12px}
+.socials a{width:42px;height:42px;border-radius:10px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;color:var(--text-muted);transition:all .2s}
+.socials a:hover{color:var(--accent);border-color:var(--accent);box-shadow:0 0 18px rgba(0,229,204,.25)}
+
+.contact-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:32px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:.82rem;color:var(--text-muted);margin-bottom:8px;font-family:var(--font-mono);letter-spacing:.04em}
+.field input,.field textarea{
+  width:100%;background:var(--bg-2);border:1px solid var(--border);border-radius:10px;
+  padding:13px 15px;color:#fff;font-size:.95rem;transition:border-color .2s, box-shadow .2s;
+}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(0,229,204,.15)}
+.field textarea{min-height:130px;resize:vertical}
+.field-error{color:var(--danger);font-size:.78rem;margin-top:6px;display:none}
+.field.invalid input,.field.invalid textarea{border-color:var(--danger)}
+.field.invalid .field-error{display:block}
+.form-success{display:none;background:rgba(0,229,204,.12);border:1px solid rgba(0,229,204,.4);color:var(--accent);padding:12px 16px;border-radius:10px;margin-top:14px;font-size:.92rem;font-family:var(--font-mono)}
+.form-success.show{display:block}
+
+/* ---------- Footer ---------- */
+footer{background:#070b18;border-top:2px solid var(--accent);padding:60px 0 24px;margin-top:60px}
+.footer-grid{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:40px;margin-bottom:40px}
+.footer-brand p{font-size:.92rem;margin-top:14px;max-width:280px}
+.footer-col h4{font-family:var(--font-mono);color:#fff;font-size:.82rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.footer-col a{color:var(--text-muted);font-size:.92rem;transition:color .2s}
+.footer-col a:hover{color:var(--accent)}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:24px;border-top:1px solid var(--border);font-size:.85rem;color:var(--text-muted);font-family:var(--font-mono)}
+.footer-bottom .heart{color:#ef4444}
+
+/* ---------- Mobile ---------- */
+@media (max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;gap:50px}
+  .pcb-illo{order:-1;max-width:380px;margin:0 auto}
+  .features{grid-template-columns:repeat(2,1fr)}
+  .why-grid{grid-template-columns:repeat(2,1fr)}
+  .why-card:nth-child(2){border-right:none}
+  .why-card:nth-child(1),.why-card:nth-child(2){border-bottom:1px solid var(--border)}
+  .pcb-cards,.blog-grid{grid-template-columns:1fr 1fr}
+  .blog-card:nth-child(3),.pcb-card:nth-child(3){grid-column:span 2}
+  .builder-grid{grid-template-columns:1fr}
+  .about-grid,.contact-grid{grid-template-columns:1fr;gap:40px}
+  .footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+}
+@media (max-width:760px){
+  .nav-links,.nav-cta .btn{display:none}
+  .hamburger{display:flex}
+  .nav.open .nav-links{
+    display:flex;flex-direction:column;gap:16px;
+    position:absolute;top:72px;left:0;right:0;
+    background:rgba(10,15,30,.96);backdrop-filter:blur(12px);
+    padding:24px;border-bottom:1px solid var(--border);
+  }
+  .nav.open .nav-cta .btn{display:inline-flex;margin-top:6px}
+  section{padding:70px 0}
+  .features,.pcb-cards,.blog-grid,.builder-cards,.stats,.footer-grid{grid-template-columns:1fr}
+  .stats{gap:24px;padding:28px 20px}
+  .why-grid{grid-template-columns:1fr 1fr}
+  .blog-card:nth-child(3),.pcb-card:nth-child(3){grid-column:auto}
+  .footer-bottom{flex-direction:column;gap:10px;text-align:center}
+  .quote-banner{padding:42px 22px}
+  .hero{padding:60px 0 40px}
+  .hero-ctas{flex-direction:column;align-items:stretch}
+  .hero-ctas .btn{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- ========== NAV ========== -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="#home"><span class="diamond"></span> ChipKraft</a>
+    <nav class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#builder">Footprint Builder</a>
+      <a href="#manufacturing">PCB Manufacturing</a>
+      <a href="#quote">Instant Quote</a>
+      <a href="#blog">Blog</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#quote" class="btn btn-primary">Get Instant Quote</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ========== HERO ========== -->
+<section class="hero" id="home">
+  <div class="container hero-grid">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> PCB DESIGN · BUILD · MANUFACTURE</span>
+      <h1>Build, Download &amp; Manufacture <span>PCB</span> — All in One Platform</h1>
+      <p class="lead">Create footprints, explore component libraries, and manufacture your PCB with expert precision.</p>
+      <div class="hero-ctas">
+        <a href="#features" class="btn btn-primary btn-lg">Search Components <span class="arrow">→</span></a>
+        <a href="#builder" class="btn btn-ghost btn-lg">Build Footprint <span class="arrow">→</span></a>
+      </div>
+      <div class="trust-bar">
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 10,000+ Footprints</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 500+ Components</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> 99% Manufacturing Accuracy</span>
+        <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> IPC Standard</span>
+      </div>
+    </div>
+    <div class="pcb-illo">
+      <!-- QFN-style chip SVG -->
+      <svg width="380" height="380" viewBox="0 0 380 380" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="chip-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0e1528"/>
+            <stop offset="100%" stop-color="#1a2440"/>
+          </linearGradient>
+          <linearGradient id="pad-grad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#00E5CC"/>
+            <stop offset="100%" stop-color="#00b8a5"/>
+          </linearGradient>
+        </defs>
+        <!-- Outer trace ring -->
+        <rect x="40" y="40" width="300" height="300" rx="20" fill="none" stroke="rgba(0,229,204,.25)" stroke-width="1" stroke-dasharray="4 6"/>
+        <!-- Chip body -->
+        <rect x="90" y="90" width="200" height="200" rx="14" fill="url(#chip-grad)" stroke="#00E5CC" stroke-width="1.2"/>
+        <!-- Pin 1 indicator -->
+        <circle cx="108" cy="108" r="5" fill="#F59E0B"/>
+        <!-- Inner notch text -->
+        <text x="190" y="185" text-anchor="middle" font-family="Space Mono, monospace" font-size="14" fill="#00E5CC" letter-spacing="2">CHIPKRAFT</text>
+        <text x="190" y="208" text-anchor="middle" font-family="Space Mono, monospace" font-size="9" fill="#94a3b8" letter-spacing="3">QFN-32  ·  5x5</text>
+        <!-- Top pads -->
+        <g fill="url(#pad-grad)">
+          <!-- top -->
+          <rect x="110" y="74" width="10" height="20" rx="2"/>
+          <rect x="135" y="74" width="10" height="20" rx="2"/>
+          <rect x="160" y="74" width="10" height="20" rx="2"/>
+          <rect x="185" y="74" width="10" height="20" rx="2"/>
+          <rect x="210" y="74" width="10" height="20" rx="2"/>
+          <rect x="235" y="74" width="10" height="20" rx="2"/>
+          <rect x="260" y="74" width="10" height="20" rx="2"/>
+          <!-- bottom -->
+          <rect x="110" y="286" width="10" height="20" rx="2"/>
+          <rect x="135" y="286" width="10" height="20" rx="2"/>
+          <rect x="160" y="286" width="10" height="20" rx="2"/>
+          <rect x="185" y="286" width="10" height="20" rx="2"/>
+          <rect x="210" y="286" width="10" height="20" rx="2"/>
+          <rect x="235" y="286" width="10" height="20" rx="2"/>
+          <rect x="260" y="286" width="10" height="20" rx="2"/>
+          <!-- left -->
+          <rect x="74" y="110" width="20" height="10" rx="2"/>
+          <rect x="74" y="135" width="20" height="10" rx="2"/>
+          <rect x="74" y="160" width="20" height="10" rx="2"/>
+          <rect x="74" y="185" width="20" height="10" rx="2"/>
+          <rect x="74" y="210" width="20" height="10" rx="2"/>
+          <rect x="74" y="235" width="20" height="10" rx="2"/>
+          <rect x="74" y="260" width="20" height="10" rx="2"/>
+          <!-- right -->
+          <rect x="286" y="110" width="20" height="10" rx="2"/>
+          <rect x="286" y="135" width="20" height="10" rx="2"/>
+          <rect x="286" y="160" width="20" height="10" rx="2"/>
+          <rect x="286" y="185" width="20" height="10" rx="2"/>
+          <rect x="286" y="210" width="20" height="10" rx="2"/>
+          <rect x="286" y="235" width="20" height="10" rx="2"/>
+          <rect x="286" y="260" width="20" height="10" rx="2"/>
+        </g>
+        <!-- Trace lines extending out -->
+        <g stroke="rgba(0,229,204,.5)" stroke-width="1" fill="none">
+          <path d="M115 74 L115 50 L60 50"/>
+          <path d="M265 74 L265 45 L330 45"/>
+          <path d="M50 165 L74 165"/>
+          <path d="M306 215 L340 215 L340 260"/>
+          <path d="M115 306 L115 340 L70 340"/>
+        </g>
+        <g fill="#00E5CC">
+          <circle cx="60" cy="50" r="3"/>
+          <circle cx="330" cy="45" r="3"/>
+          <circle cx="50" cy="165" r="3"/>
+          <circle cx="340" cy="260" r="3"/>
+          <circle cx="70" cy="340" r="3"/>
+        </g>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ========== FEATURES ========== -->
+<section id="features">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>Everything You Need in One Platform</h2>
+      <p>From footprint creation to PCB manufacturing — Chipkraft covers your entire workflow.</p>
+    </div>
+    <div class="features">
+      <div class="feature-card reveal">
+        <div class="feat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>
+        <h3>Footprint Library</h3>
+        <p>Browse 10,000+ verified, ready-to-use component footprints.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></div>
+        <h3>Footprint Builder</h3>
+        <p>Design footprints via guided Wizard or full Freeform editor.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V10l6-4 6 4v11"/><path d="M15 10l6 4v7"/><path d="M3 21h18"/></svg></div>
+        <h3>PCB Manufacturing</h3>
+        <p>Single, double &amp; multi-layer PCBs with fast turnaround.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feat-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <h3>Instant Quotation</h3>
+        <p>Upload your files and get a quote instantly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== BUILDER ========== -->
+<section id="builder" class="builder">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>Build Accurate PCB Footprints — Fast &amp; Reliable</h2>
+      <p>Industry-standard footprints using our advanced Wizard Builder or fully custom Freeform Editor.</p>
+    </div>
+    <div class="builder-grid">
+      <div class="builder-cards">
+        <div class="mode-card reveal">
+          <span class="badge badge-fast">FAST</span>
+          <div class="mode-icon">✦</div>
+          <h3>Wizard Mode</h3>
+          <p class="desc">Simple. Fast. Accurate. Create footprints in seconds.</p>
+          <ul class="steps">
+            <li>Select package type (QFN, BGA, SOP, DIP)</li>
+            <li>Enter pin count, pitch, dimensions</li>
+            <li>Auto-generated IPC-standard footprint</li>
+            <li>Ready-to-use CAD files instantly</li>
+          </ul>
+          <div class="tag">Best for: Quick design &amp; standard components</div>
+        </div>
+        <div class="mode-card adv reveal">
+          <span class="badge badge-adv">ADVANCED</span>
+          <div class="mode-icon">✎</div>
+          <h3>Freeform Mode</h3>
+          <p class="desc">Advanced. Flexible. Powerful. Full control over every pad.</p>
+          <ul class="steps">
+            <li>Draw pads manually</li>
+            <li>Set grid &amp; snapping</li>
+            <li>Edit pad size, shape, spacing</li>
+            <li>Adjust courtyard &amp; silkscreen</li>
+          </ul>
+          <div class="tag">Best for: Custom parts &amp; non-standard packages</div>
+        </div>
+      </div>
+      <div class="export-panel reveal">
+        <h3>Export in Multiple Formats</h3>
+        <p>Save your design for future use. Edit anytime from your dashboard.</p>
+        <div class="format-pills">
+          <span class="pill">KiCad</span>
+          <span class="pill">Altium</span>
+          <span class="pill">Eagle</span>
+        </div>
+        <a href="#quote" class="btn btn-primary" style="align-self:flex-start">Start Building <span class="arrow">→</span></a>
+      </div>
+    </div>
+
+    <div class="stats reveal" id="stats">
+      <div class="stat"><div class="num" data-count="10000" data-suffix="+">0</div><div class="label">Footprints</div></div>
+      <div class="stat"><div class="num" data-count="500" data-suffix="+">0</div><div class="label">Components</div></div>
+      <div class="stat"><div class="num" data-count="99" data-suffix="%">0</div><div class="label">Accuracy</div></div>
+      <div class="stat"><div class="num" style="font-size:1.4rem;line-height:2">IPC</div><div class="label">Standard Based</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== WHY ========== -->
+<section id="why">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>Why Engineers Trust Chipkraft</h2>
+      <p>Built by engineers, for engineers — every detail tuned for production-grade design.</p>
+    </div>
+    <div class="why-grid reveal">
+      <div class="why-card">
+        <div class="why-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+        <h3>Easy to Use</h3><p>Intuitive interface for beginners and experts alike.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <h3>Fast Processing</h3><p>From design to download in minutes.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg></div>
+        <h3>Accurate Footprints</h3><p>IPC-standard, manufacturing-ready every time.</p>
+      </div>
+      <div class="why-card">
+        <div class="why-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></div>
+        <h3>All-in-One Platform</h3><p>Design, verify, and manufacture under one roof.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== MANUFACTURING ========== -->
+<section id="manufacturing" class="builder">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>PCB Manufacturing Services</h2>
+      <p>From prototype to production — reliable, fast, and affordable.</p>
+    </div>
+    <div class="pcb-cards">
+      <div class="pcb-card reveal">
+        <div class="pcb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/></svg></div>
+        <h3>Single Layer PCB</h3>
+        <p>Cost-effective boards for simple circuits and high-volume production.</p>
+        <div class="specs">
+          <span>· FR-4 substrate</span><span>· 1oz copper</span><span>· 24h turnaround</span>
+        </div>
+      </div>
+      <div class="pcb-card popular reveal">
+        <span class="popular-badge">MOST POPULAR</span>
+        <div class="pcb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/></svg></div>
+        <h3>Double Layer PCB</h3>
+        <p>The everyday workhorse — ideal for most consumer and industrial designs.</p>
+        <div class="specs">
+          <span>· Plated through holes</span><span>· 1–2oz copper</span><span>· HASL / ENIG finish</span>
+        </div>
+      </div>
+      <div class="pcb-card reveal">
+        <div class="pcb-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="4" rx="1"/><rect x="3" y="10" width="18" height="4" rx="1"/><rect x="3" y="17" width="18" height="4" rx="1"/></svg></div>
+        <h3>Multi-Layer PCB</h3>
+        <p>4 to 16+ layers for high-density, high-speed and RF applications.</p>
+        <div class="specs">
+          <span>· Controlled impedance</span><span>· Blind / buried vias</span><span>· Up to 16 layers</span>
+        </div>
+      </div>
+    </div>
+
+    <table class="spec-table reveal">
+      <thead><tr><th>Specification</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Min Track Width</td><td>0.1mm</td></tr>
+        <tr><td>Min Drill Size</td><td>0.2mm</td></tr>
+        <tr><td>Board Thickness</td><td>0.4mm – 3.2mm</td></tr>
+        <tr><td>Surface Finish</td><td>HASL, ENIG, OSP</td></tr>
+        <tr><td>Solder Mask</td><td>Green, Red, Blue, Black, White</td></tr>
+      </tbody>
+    </table>
+    <div class="cta-row reveal">
+      <a href="#quote" class="btn btn-primary btn-lg">Get Instant Quote <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== QUOTE BANNER ========== -->
+<section id="quote">
+  <div class="container">
+    <div class="quote-banner reveal">
+      <h2>Get Your PCB Quote Instantly</h2>
+      <p>Upload your Gerber files and receive a quote in seconds.</p>
+      <a href="#contact" class="btn btn-primary btn-lg">Request a Quote <span class="arrow">→</span></a>
+      <div class="note">Supports .zip, .rar Gerber formats</div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== ABOUT ========== -->
+<section id="about">
+  <div class="container about-grid">
+    <div class="reveal">
+      <h2>About Chipkraft</h2>
+      <p>Chipkraft is a platform built to simplify PCB design and manufacturing. We provide accurate footprint libraries, intelligent design tools, and reliable PCB services — helping engineers, students, and startups build hardware faster.</p>
+      <a href="#contact" class="learn-link">Learn More <span class="arrow">→</span></a>
+    </div>
+    <ul class="about-list reveal">
+      <li>
+        <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 2v6L4 20a2 2 0 0 0 2 3h12a2 2 0 0 0 2-3L15 8V2"/><path d="M8 2h8"/></svg></div>
+        <div><strong>Precision Engineering</strong><span>IPC-standard outputs, every time.</span></div>
+      </li>
+      <li>
+        <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h7l-1 8 10-12h-7z"/></svg></div>
+        <div><strong>Fast Turnaround</strong><span>From design to delivered board in days.</span></div>
+      </li>
+      <li>
+        <div class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <div><strong>Built for Makers &amp; Engineers</strong><span>From hobby projects to production runs.</span></div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- ========== BLOG ========== -->
+<section id="blog">
+  <div class="container">
+    <div class="section-head reveal">
+      <h2>Latest from the World of PCB &amp; Semiconductors</h2>
+      <p>Insights, tutorials and industry analysis from the Chipkraft engineering team.</p>
+    </div>
+    <div class="blog-grid">
+      <article class="blog-card reveal">
+        <span class="cat-badge">Semiconductor</span>
+        <h3>Why GaN is Reshaping Power Electronics in 2026</h3>
+        <p class="excerpt">Gallium Nitride is unlocking smaller, cooler, faster power stages — here's what PCB designers need to know about layout and thermal management.</p>
+        <a href="blog/posts/gan-power-electronics.html" class="read-more">Read More →</a>
+        <div class="blog-meta"><span>Apr 28, 2026</span><span>6 min read</span></div>
+      </article>
+      <article class="blog-card reveal">
+        <span class="cat-badge">EDA Tools</span>
+        <h3>From Wizard to Freeform: Choosing the Right Footprint Workflow</h3>
+        <p class="excerpt">A practical comparison of guided footprint builders versus full freeform editors, with real-world examples from QFN to BGA packages.</p>
+        <a href="blog/posts/wizard-vs-freeform.html" class="read-more">Read More →</a>
+        <div class="blog-meta"><span>Apr 18, 2026</span><span>8 min read</span></div>
+      </article>
+      <article class="blog-card reveal">
+        <span class="cat-badge">Manufacturing</span>
+        <h3>HASL vs ENIG vs OSP: Picking the Right Surface Finish</h3>
+        <p class="excerpt">Surface finish affects solderability, shelf life and cost. We break down the trade-offs for prototype and production runs.</p>
+        <a href="blog/posts/surface-finish-guide.html" class="read-more">Read More →</a>
+        <div class="blog-meta"><span>Apr 04, 2026</span><span>5 min read</span></div>
+      </article>
+    </div>
+    <div class="cta-row reveal">
+      <a href="blog/" class="btn btn-ghost">View All Articles <span class="arrow">→</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- ========== CONTACT ========== -->
+<section id="contact" class="builder">
+  <div class="container contact-grid">
+    <div class="contact-info reveal">
+      <h2>Let's Build Something</h2>
+      <p>Have a project in mind, or just want to explore what Chipkraft can do for your team? We'd love to hear from you.</p>
+      <ul class="contact-list">
+        <li><div class="ico">✉</div><div><strong>EMAIL</strong><span>hello@chipkraft.com</span></div></li>
+        <li><div class="ico">☎</div><div><strong>PHONE</strong><span>+91 XXXXX XXXXX</span></div></li>
+        <li><div class="ico">⌖</div><div><strong>LOCATION</strong><span>Surat, Gujarat, India</span></div></li>
+      </ul>
+      <div class="socials">
+        <a href="#" aria-label="LinkedIn"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5C4.98 4.88 3.87 6 2.5 6S0 4.88 0 3.5 1.12 1 2.5 1s2.48 1.12 2.48 2.5zM.22 8h4.56v14H.22V8zm7.5 0h4.37v1.92h.06c.61-1.15 2.1-2.36 4.32-2.36 4.62 0 5.47 3.04 5.47 7v7.44h-4.56v-6.59c0-1.57-.03-3.6-2.19-3.6-2.2 0-2.53 1.71-2.53 3.48V22H7.72V8z"/></svg></a>
+        <a href="#" aria-label="X"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2H21.5l-7.5 8.57L23 22h-6.844l-5.36-7.014L4.66 22H1.4l8.02-9.166L1 2h7.014l4.847 6.41L18.244 2zm-1.2 18h1.875L7.06 4H5.05l11.994 16z"/></svg></a>
+        <a href="#" aria-label="GitHub"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 .5C5.65.5.5 5.65.5 12c0 5.08 3.29 9.39 7.86 10.91.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.36-3.88-1.36-.52-1.33-1.27-1.69-1.27-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.02 1.75 2.68 1.25 3.34.96.1-.74.4-1.25.72-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.18 1.18a11 11 0 0 1 5.79 0c2.21-1.49 3.18-1.18 3.18-1.18.62 1.58.23 2.75.11 3.04.74.81 1.18 1.84 1.18 3.1 0 4.42-2.69 5.4-5.25 5.68.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.55C20.21 21.39 23.5 17.07 23.5 12 23.5 5.65 18.35.5 12 .5z"/></svg></a>
+      </div>
+    </div>
+    <form class="contact-form reveal" id="contactForm" novalidate>
+      <div class="field"><label for="name">Name</label><input id="name" name="name" type="text" required /><div class="field-error">Please enter your name.</div></div>
+      <div class="field"><label for="email">Email</label><input id="email" name="email" type="email" required /><div class="field-error">Please enter a valid email.</div></div>
+      <div class="field"><label for="subject">Subject</label><input id="subject" name="subject" type="text" required /><div class="field-error">Please add a subject.</div></div>
+      <div class="field"><label for="message">Message</label><textarea id="message" name="message" required></textarea><div class="field-error">Please write a short message.</div></div>
+      <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center">Send Message <span class="arrow">→</span></button>
+      <div class="form-success" id="formSuccess">✓ Thanks! Your message has been sent. We'll get back to you within 24 hours.</div>
+    </form>
+  </div>
+</section>
+
+<!-- ========== FOOTER ========== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="#home"><span class="diamond"></span> ChipKraft</a>
+        <p>Chipkraft — Build with Precision. Footprints, libraries, and PCB manufacturing in one platform.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul><li><a href="#home">Home</a></li><li><a href="#builder">Footprint Builder</a></li><li><a href="#manufacturing">PCB Manufacturing</a></li><li><a href="#quote">Instant Quote</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul><li><a href="#features">Footprint Library</a></li><li><a href="#builder">Wizard Builder</a></li><li><a href="#builder">Freeform Editor</a></li><li><a href="#manufacturing">Manufacturing</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul><li><a href="#blog">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="#">FAQs</a></li><li><a href="#contact">Contact</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Chipkraft. All rights reserved.</span>
+      <span>Made with <span class="heart">♥</span> for Engineers</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Hamburger
+const nav = document.getElementById('nav');
+document.getElementById('hamburger').addEventListener('click', () => nav.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+
+// Reveal on scroll
+const revealObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); revealObs.unobserve(e.target); } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+// Animated counters
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    e.target.querySelectorAll('[data-count]').forEach(el => {
+      const target = +el.dataset.count;
+      const suffix = el.dataset.suffix || '';
+      const dur = 1600; const start = performance.now();
+      const tick = (now) => {
+        const p = Math.min(1, (now - start) / dur);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const val = Math.floor(target * eased);
+        el.textContent = val.toLocaleString() + suffix;
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    counterObs.unobserve(e.target);
+  });
+}, { threshold: 0.4 });
+const stats = document.getElementById('stats');
+if (stats) counterObs.observe(stats);
+
+// Form validation
+const form = document.getElementById('contactForm');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  let ok = true;
+  const fields = form.querySelectorAll('input, textarea');
+  fields.forEach(f => {
+    const wrap = f.closest('.field');
+    const val = f.value.trim();
+    let valid = val.length > 0;
+    if (f.type === 'email') valid = valid && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    wrap.classList.toggle('invalid', !valid);
+    if (!valid) ok = false;
+  });
+  if (ok) {
+    document.getElementById('formSuccess').classList.add('show');
+    form.reset();
+    setTimeout(() => document.getElementById('formSuccess').classList.remove('show'), 5000);
+  }
+});
+</script>
+</body>
+</html>
