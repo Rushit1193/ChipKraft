@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<!-- ✏️ EDIT: Update title, description, and og:image for each post -->
+<title>Post Title — ChipKraft Blog</title>
+<meta name="description" content="A short description of this blog post for SEO (150–160 chars)."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../assets/shared.css"/>
+<style>
+/* ===== Blog Post Page Styles ===== */
+.post-hero{
+  padding:80px 0 50px;
+  background:radial-gradient(900px 400px at 80% -10%,rgba(0,229,204,.10),transparent 60%),var(--bg);
+  position:relative;overflow:hidden;
+}
+.post-hero::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,rgba(0,229,204,.05) 0 1px,transparent 1px 60px),repeating-linear-gradient(90deg,rgba(0,229,204,.05) 0 1px,transparent 1px 60px);
+  mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 80%);
+  -webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 80%);
+}
+.post-hero-inner{position:relative;z-index:1;max-width:760px}
+.breadcrumb{font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);margin-bottom:20px;display:flex;gap:8px;align-items:center}
+.breadcrumb a{color:var(--text-muted);transition:color .2s}
+.breadcrumb a:hover{color:var(--accent)}
+.breadcrumb span{color:var(--border-2)}
+.post-hero h1{margin:14px 0 18px}
+.post-hero .lead{font-size:1.05rem;color:#b3bdd1;max-width:640px}
+.post-meta-bar{display:flex;flex-wrap:wrap;gap:18px;margin-top:24px;font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);align-items:center}
+.post-meta-bar span{display:flex;gap:6px;align-items:center}
+
+/* Article body */
+.post-layout{display:grid;grid-template-columns:1fr 280px;gap:60px;padding:60px 0 80px;align-items:start}
+.post-body{max-width:720px}
+.post-body h2{font-size:1.5rem;margin:40px 0 14px;color:var(--heading)}
+.post-body h3{font-size:1.15rem;margin:30px 0 10px;color:var(--heading)}
+.post-body p{color:#cfd6e6;font-size:1.02rem;line-height:1.75;margin-bottom:18px}
+.post-body ul,.post-body ol{color:#cfd6e6;padding-left:24px;margin-bottom:18px;line-height:1.75;font-size:1.02rem}
+.post-body li{margin-bottom:6px}
+.post-body strong{color:#fff}
+.post-body a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.post-body code{font-family:var(--font-mono);background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2);padding:2px 7px;border-radius:5px;font-size:.9em;color:var(--accent)}
+.post-body pre{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;overflow-x:auto;margin-bottom:18px}
+.post-body pre code{background:none;border:none;padding:0;color:#e2e8f0;font-size:.9rem}
+.post-body blockquote{border-left:3px solid var(--accent);padding:14px 20px;background:rgba(0,229,204,.05);border-radius:0 10px 10px 0;margin-bottom:18px}
+.post-body blockquote p{margin:0;color:#a8bcc9;font-style:italic}
+.post-body hr{border:none;border-top:1px solid var(--border);margin:40px 0}
+.post-body .callout{background:rgba(0,229,204,.07);border:1px solid rgba(0,229,204,.25);border-radius:12px;padding:18px 22px;margin-bottom:20px}
+.post-body .callout p{margin:0;color:#b3d4ce}
+
+/* Sidebar */
+.post-sidebar{position:sticky;top:90px}
+.sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:22px}
+.sidebar-card h4{font-family:var(--font-mono);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:#fff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.toc-list a{color:var(--text-muted);font-size:.9rem;transition:color .2s;line-height:1.4;display:block}
+.toc-list a:hover{color:var(--accent)}
+.related-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.related-list li a{font-size:.9rem;color:var(--text-muted);transition:color .2s;line-height:1.4;display:block}
+.related-list li a:hover{color:var(--accent)}
+.related-list .rel-cat{font-family:var(--font-mono);font-size:.68rem;color:var(--accent);letter-spacing:.04em}
+
+/* Post footer nav */
+.post-nav{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:50px;padding-top:40px;border-top:1px solid var(--border)}
+.post-nav-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;transition:border-color .2s,transform .2s}
+.post-nav-item:hover{border-color:rgba(0,229,204,.35);transform:translateY(-2px)}
+.post-nav-item .dir{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;color:var(--text-muted);margin-bottom:6px}
+.post-nav-item .nav-title{color:#fff;font-size:.95rem;font-weight:600}
+.post-nav-item.next{text-align:right}
+
+@media(max-width:900px){
+  .post-layout{grid-template-columns:1fr}
+  .post-sidebar{position:static}
+}
+@media(max-width:600px){
+  .post-nav{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="../../index.html"><span class="diamond"></span> ChipKraft</a>
+    <nav class="nav-links">
+      <a href="../../index.html">Home</a>
+      <a href="../../index.html#builder">Footprint Builder</a>
+      <a href="../../index.html#manufacturing">PCB Manufacturing</a>
+      <a href="../../index.html#quote">Instant Quote</a>
+      <a href="../index.html" class="active">Blog</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="../../index.html#quote" class="btn btn-primary">Get Instant Quote</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- POST HERO -->
+<section class="post-hero">
+  <div class="container post-hero-inner">
+    <div class="breadcrumb">
+      <a href="../../index.html">Home</a><span>/</span>
+      <a href="../index.html">Blog</a><span>/</span>
+      <!-- ✏️ EDIT: Update category below -->
+      <span>Category Name</span>
+    </div>
+    <!-- ✏️ EDIT: Update category badge -->
+    <span class="cat-badge">Category</span>
+    <!-- ✏️ EDIT: Your post title -->
+    <h1>Your Blog Post Title Goes Here</h1>
+    <!-- ✏️ EDIT: Short subtitle/intro sentence -->
+    <p class="lead">A one or two sentence introduction that summarises what this article covers and hooks the reader.</p>
+    <div class="post-meta-bar">
+      <!-- ✏️ EDIT: Author, date, read time -->
+      <span>By ChipKraft Team</span>
+      <span>·</span>
+      <span>May 01, 2026</span>
+      <span>·</span>
+      <span>5 min read</span>
+    </div>
+  </div>
+</section>
+
+<!-- POST LAYOUT -->
+<div class="container">
+  <div class="post-layout">
+
+    <!-- ===== ARTICLE BODY ===== -->
+    <article class="post-body">
+
+      <!-- ✏️ EDIT: Write your article content below using h2/h3/p/ul/blockquote etc. -->
+
+      <h2>Introduction</h2>
+      <p>Start your article here. You can write as many paragraphs as you need. This template gives you all the styled elements below — just copy the ones you need.</p>
+
+      <h2>Section Heading (h2)</h2>
+      <p>A paragraph of body text. Use <strong>bold</strong> to highlight key terms. Link to external sources like <a href="#">this example</a>.</p>
+
+      <h3>Sub-section Heading (h3)</h3>
+      <p>Use h3 for sub-sections within a main section.</p>
+
+      <ul>
+        <li>Bullet point one</li>
+        <li>Bullet point two</li>
+        <li>Bullet point three</li>
+      </ul>
+
+      <blockquote>
+        <p>"Use blockquotes for important callouts, expert quotes, or key takeaways."</p>
+      </blockquote>
+
+      <div class="callout">
+        <p>💡 <strong>Pro Tip:</strong> Use the callout box to highlight tips, warnings, or important notes that readers shouldn't miss.</p>
+      </div>
+
+      <h2>Code Example</h2>
+      <p>Use inline <code>code snippets</code> or full code blocks:</p>
+      <pre><code># Example code block
+import chipkraft_sdk as ck
+
+footprint = ck.Footprint(package="QFN", pins=32, pitch=0.5)
+footprint.export("KiCad")</code></pre>
+
+      <hr>
+
+      <h2>Conclusion</h2>
+      <p>Wrap up your article with a summary and call-to-action. What should readers do next?</p>
+      <p>Ready to put this into practice? <a href="../../index.html#builder">Try the Chipkraft Footprint Builder →</a></p>
+
+    </article>
+    <!-- ===== END ARTICLE BODY ===== -->
+
+    <!-- SIDEBAR -->
+    <aside class="post-sidebar">
+      <!-- Table of Contents — update links to match your h2 IDs -->
+      <div class="sidebar-card">
+        <h4>In This Article</h4>
+        <ul class="toc-list">
+          <li><a href="#introduction">Introduction</a></li>
+          <li><a href="#section-1">Section 1</a></li>
+          <li><a href="#section-2">Section 2</a></li>
+          <li><a href="#conclusion">Conclusion</a></li>
+        </ul>
+      </div>
+
+      <!-- Related Posts — update links -->
+      <div class="sidebar-card">
+        <h4>Related Posts</h4>
+        <ul class="related-list">
+          <li>
+            <span class="rel-cat">MANUFACTURING</span>
+            <a href="surface-finish-guide.html">HASL vs ENIG vs OSP: Picking the Right Surface Finish</a>
+          </li>
+          <li>
+            <span class="rel-cat">EDA TOOLS</span>
+            <a href="wizard-vs-freeform.html">From Wizard to Freeform: Choosing the Right Footprint Workflow</a>
+          </li>
+          <li>
+            <span class="rel-cat">SEMICONDUCTOR</span>
+            <a href="gan-power-electronics.html">Why GaN is Reshaping Power Electronics in 2026</a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- CTA -->
+      <div class="sidebar-card" style="background:linear-gradient(135deg,rgba(0,229,204,.1),rgba(0,229,204,.02)),var(--surface);border-color:rgba(0,229,204,.3)">
+        <h4>Start Building</h4>
+        <p style="font-size:.9rem;margin-bottom:16px">Create accurate PCB footprints in minutes with Chipkraft.</p>
+        <a href="../../index.html#builder" class="btn btn-primary" style="width:100%;justify-content:center;font-size:.88rem">Build Footprint →</a>
+      </div>
+    </aside>
+
+  </div><!-- /post-layout -->
+
+  <!-- Prev / Next Post Navigation -->
+  <div class="post-nav">
+    <a href="#" class="post-nav-item prev">
+      <div class="dir">← Previous Post</div>
+      <div class="nav-title">Previous Post Title</div>
+    </a>
+    <a href="#" class="post-nav-item next">
+      <div class="dir">Next Post →</div>
+      <div class="nav-title">Next Post Title</div>
+    </a>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a class="logo" href="../../index.html"><span class="diamond"></span> ChipKraft</a>
+        <p>Chipkraft — Build with Precision. Footprints, libraries, and PCB manufacturing in one platform.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <ul><li><a href="../../index.html">Home</a></li><li><a href="../../index.html#builder">Footprint Builder</a></li><li><a href="../../index.html#manufacturing">PCB Manufacturing</a></li><li><a href="../../index.html#quote">Instant Quote</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Blog</h4>
+        <ul><li><a href="../index.html">All Articles</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <ul><li><a href="../index.html">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="#">FAQs</a></li><li><a href="../../index.html#contact">Contact</a></li></ul>
+      </div>
+      <div class="footer-col">
+        <h4>Legal</h4>
+        <ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2025 Chipkraft. All rights reserved.</span>
+      <span>Made with <span class="heart">♥</span> for Engineers</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const nav = document.getElementById('nav');
+document.getElementById('hamburger').addEventListener('click', () => nav.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+</script>
+</body>
+</html>
