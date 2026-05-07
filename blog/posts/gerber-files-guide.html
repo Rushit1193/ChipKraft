@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Understanding Gerber Files: What You Need to Send to Your Fab — ChipKraft Blog</title>
+<meta name="description" content="A complete breakdown of the Gerber file set — copper layers, drill files, board outline, solder mask, and silkscreen — and how to export them correctly."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="../../assets/shared.css"/>
+<style>
+.post-hero{padding:80px 0 50px;background:radial-gradient(900px 400px at 80% -10%,rgba(0,229,204,.10),transparent 60%),var(--bg);position:relative;overflow:hidden;}
+.post-hero::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:repeating-linear-gradient(0deg,rgba(0,229,204,.05) 0 1px,transparent 1px 60px),repeating-linear-gradient(90deg,rgba(0,229,204,.05) 0 1px,transparent 1px 60px);mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 80%);-webkit-mask-image:radial-gradient(ellipse at 50% 0%,#000 30%,transparent 80%);}
+.post-hero-inner{position:relative;z-index:1;max-width:760px}
+.breadcrumb{font-family:var(--font-mono);font-size:.78rem;color:var(--text-muted);margin-bottom:20px;display:flex;gap:8px;align-items:center}
+.breadcrumb a{color:var(--text-muted);transition:color .2s}.breadcrumb a:hover{color:var(--accent)}.breadcrumb span{color:var(--border-2)}
+.post-hero h1{margin:14px 0 18px}
+.post-hero .lead{font-size:1.05rem;color:#b3bdd1;max-width:640px}
+.post-meta-bar{display:flex;flex-wrap:wrap;gap:18px;margin-top:24px;font-family:var(--font-mono);font-size:.8rem;color:var(--text-muted);align-items:center}
+.post-layout{display:grid;grid-template-columns:1fr 280px;gap:60px;padding:60px 0 80px;align-items:start}
+.post-body h2{font-size:1.5rem;margin:40px 0 14px;color:var(--heading)}
+.post-body h3{font-size:1.15rem;margin:30px 0 10px;color:var(--heading)}
+.post-body p{color:#cfd6e6;font-size:1.02rem;line-height:1.75;margin-bottom:18px}
+.post-body ul{color:#cfd6e6;padding-left:24px;margin-bottom:18px;line-height:1.75;font-size:1.02rem}
+.post-body li{margin-bottom:6px}
+.post-body strong{color:#fff}
+.post-body a{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+.post-body code{font-family:var(--font-mono);background:rgba(0,229,204,.08);border:1px solid rgba(0,229,204,.2);padding:2px 7px;border-radius:5px;font-size:.9em;color:var(--accent)}
+.post-body blockquote{border-left:3px solid var(--accent);padding:14px 20px;background:rgba(0,229,204,.05);border-radius:0 10px 10px 0;margin-bottom:18px}
+.post-body blockquote p{margin:0;color:#a8bcc9;font-style:italic}
+.post-body hr{border:none;border-top:1px solid var(--border);margin:40px 0}
+.post-body .callout{background:rgba(0,229,204,.07);border:1px solid rgba(0,229,204,.25);border-radius:12px;padding:18px 22px;margin-bottom:20px}
+.post-body .callout p{margin:0;color:#b3d4ce}
+.file-list{list-style:none;padding:0;display:flex;flex-direction:column;gap:10px;margin-bottom:20px}
+.file-list li{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 16px;display:flex;gap:14px;align-items:flex-start}
+.file-list .fname{font-family:var(--font-mono);font-size:.82rem;color:var(--accent);min-width:140px;flex-shrink:0}
+.file-list .fdesc{font-size:.9rem;color:#cfd6e6}
+.post-sidebar{position:sticky;top:90px}
+.sidebar-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:22px}
+.sidebar-card h4{font-family:var(--font-mono);font-size:.82rem;letter-spacing:.06em;text-transform:uppercase;color:#fff;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.toc-list a{color:var(--text-muted);font-size:.9rem;transition:color .2s;line-height:1.4;display:block}.toc-list a:hover{color:var(--accent)}
+.related-list{list-style:none;display:flex;flex-direction:column;gap:12px}
+.related-list li a{font-size:.9rem;color:var(--text-muted);transition:color .2s;line-height:1.4;display:block}.related-list li a:hover{color:var(--accent)}
+.related-list .rel-cat{font-family:var(--font-mono);font-size:.68rem;color:var(--accent);letter-spacing:.04em}
+.post-nav{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:50px;padding-top:40px;border-top:1px solid var(--border)}
+.post-nav-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;transition:border-color .2s,transform .2s}.post-nav-item:hover{border-color:rgba(0,229,204,.35);transform:translateY(-2px)}
+.post-nav-item .dir{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.06em;color:var(--text-muted);margin-bottom:6px}
+.post-nav-item .nav-title{color:#fff;font-size:.95rem;font-weight:600}
+.post-nav-item.next{text-align:right}
+@media(max-width:900px){.post-layout{grid-template-columns:1fr}.post-sidebar{position:static}}
+@media(max-width:600px){.post-nav{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <div class="container nav-inner">
+    <a class="logo" href="../../index.html"><span class="diamond"></span> ChipKraft</a>
+    <nav class="nav-links">
+      <a href="../../index.html">Home</a>
+      <a href="../../index.html#builder">Footprint Builder</a>
+      <a href="../../index.html#manufacturing">PCB Manufacturing</a>
+      <a href="../../index.html#quote">Instant Quote</a>
+      <a href="../index.html" class="active">Blog</a>
+      <a href="../../index.html#contact">Contact</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="../../index.html#quote" class="btn btn-primary">Get Instant Quote</a>
+      <button class="hamburger" id="hamburger" aria-label="Menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<section class="post-hero">
+  <div class="container post-hero-inner">
+    <div class="breadcrumb"><a href="../../index.html">Home</a><span>/</span><a href="../index.html">Blog</a><span>/</span><span>Manufacturing</span></div>
+    <span class="cat-badge">Manufacturing</span>
+    <h1>Understanding Gerber Files: What You Need to Send to Your Fab</h1>
+    <p class="lead">A complete breakdown of the Gerber file set — copper layers, drill files, board outline, solder mask, and silkscreen — and how to export them correctly from your EDA tool.</p>
+    <div class="post-meta-bar"><span>By ChipKraft Team</span><span>·</span><span>Mar 10, 2026</span><span>·</span><span>7 min read</span></div>
+  </div>
+</section>
+
+<div class="container">
+  <div class="post-layout">
+    <article class="post-body">
+
+      <h2 id="what">What Are Gerber Files?</h2>
+      <p>Gerber files are the industry-standard file format for describing PCB layers to a manufacturer. Each file describes one layer of your board — copper, solder mask, silkscreen, board outline — as a set of vector graphics. Together, they form a complete manufacturing package.</p>
+      <p>The modern format is <strong>Gerber X2</strong> (RS-274X extended), which includes embedded metadata. Most fabs also accept the older RS-274X format.</p>
+
+      <h2 id="files">The Complete Gerber File Set</h2>
+      <p>For a standard 2-layer board, you need these files:</p>
+
+      <ul class="file-list">
+        <li><span class="fname">GTL / F.Cu</span><span class="fdesc">Top copper layer — all pads, traces, and pours on the front of the board</span></li>
+        <li><span class="fname">GBL / B.Cu</span><span class="fdesc">Bottom copper layer — same as above but on the back</span></li>
+        <li><span class="fname">GTS / F.Mask</span><span class="fdesc">Top solder mask — defines where solder mask is REMOVED (i.e. where pads are exposed)</span></li>
+        <li><span class="fname">GBS / B.Mask</span><span class="fdesc">Bottom solder mask</span></li>
+        <li><span class="fname">GTO / F.SilkS</span><span class="fdesc">Top silkscreen — component outlines, reference designators, polarity markers</span></li>
+        <li><span class="fname">GBO / B.SilkS</span><span class="fdesc">Bottom silkscreen</span></li>
+        <li><span class="fname">GKO / Edge.Cuts</span><span class="fdesc">Board outline / mechanical layer — defines the exact shape and size of your PCB</span></li>
+        <li><span class="fname">DRL / .drl</span><span class="fdesc">Drill file (Excellon format) — all hole positions and sizes, both plated and non-plated</span></li>
+      </ul>
+
+      <div class="callout">
+        <p>💡 <strong>4-layer boards</strong> also need <code>G2L</code> (Inner Copper Layer 1) and <code>G3L</code> (Inner Copper Layer 2) files.</p>
+      </div>
+
+      <h2 id="drill">Understanding the Drill File</h2>
+      <p>The drill file is separate from the Gerber files — it uses the Excellon format. It defines every hole on your board:</p>
+      <ul>
+        <li><strong>PTH (Plated Through Hole)</strong> — holes with copper on the walls, used for through-hole components and vias</li>
+        <li><strong>NPTH (Non-Plated Through Hole)</strong> — unplated holes, used for mounting holes and mechanical features</li>
+      </ul>
+      <p>Some EDA tools export PTH and NPTH as separate files. Check your fab's requirements — most accept both in a single file with separate tool definitions.</p>
+
+      <h2 id="export">How to Export from KiCad</h2>
+      <ol>
+        <li>Open PCB Editor → <strong>File → Fabrication Outputs → Gerbers</strong></li>
+        <li>Set output folder, check all required layers are ticked</li>
+        <li>Enable <strong>"Use Protel filename extensions"</strong> for maximum fab compatibility</li>
+        <li>Click <strong>"Plot"</strong></li>
+        <li>Then click <strong>"Generate Drill Files"</strong> — set format to Excellon, enable separate PTH/NPTH if required</li>
+        <li>Zip all output files into a single <code>.zip</code> archive and upload to your fab</li>
+      </ol>
+
+      <blockquote>
+        <p>"Always run a Gerber viewer check before submitting. Free tools like Gerbv or KiCad's built-in viewer catch layer mix-ups that would otherwise cause a costly re-spin."</p>
+      </blockquote>
+
+      <h2 id="mistakes">Common Mistakes</h2>
+      <ul>
+        <li><strong>Missing board outline</strong> — without Edge.Cuts, the fab doesn't know where to cut your board</li>
+        <li><strong>Wrong solder mask polarity</strong> — mask files define openings (where mask is removed), not where mask exists</li>
+        <li><strong>Forgetting NPTH drill file</strong> — mounting holes without the NPTH file may be drilled as plated holes</li>
+        <li><strong>Silkscreen over pads</strong> — ink on pads causes soldering problems; run a DRC check before export</li>
+        <li><strong>Submitting unzipped files</strong> — always zip the entire Gerber set into one archive</li>
+      </ul>
+
+      <hr>
+
+      <h2 id="conclusion">Ready to Order?</h2>
+      <p>Once your Gerbers are exported and verified, you're ready to order. Chipkraft's instant quote engine accepts your Gerber zip directly and gives you pricing in seconds — no back-and-forth with a sales team.</p>
+      <p><a href="../../index.html#quote">Upload your Gerbers and get an instant quote →</a></p>
+
+    </article>
+
+    <aside class="post-sidebar">
+      <div class="sidebar-card">
+        <h4>In This Article</h4>
+        <ul class="toc-list">
+          <li><a href="#what">What Are Gerber Files?</a></li>
+          <li><a href="#files">The Complete File Set</a></li>
+          <li><a href="#drill">Understanding Drill Files</a></li>
+          <li><a href="#export">Exporting from KiCad</a></li>
+          <li><a href="#mistakes">Common Mistakes</a></li>
+          <li><a href="#conclusion">Ready to Order?</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card">
+        <h4>Related Posts</h4>
+        <ul class="related-list">
+          <li><span class="rel-cat">MANUFACTURING</span><a href="surface-finish-guide.html">HASL vs ENIG vs OSP Guide</a></li>
+          <li><span class="rel-cat">TUTORIAL</span><a href="first-footprint-tutorial.html">Your First PCB Footprint</a></li>
+          <li><span class="rel-cat">SEMICONDUCTOR</span><a href="bga-vs-qfn.html">BGA vs QFN Package Guide</a></li>
+        </ul>
+      </div>
+      <div class="sidebar-card" style="background:linear-gradient(135deg,rgba(0,229,204,.1),rgba(0,229,204,.02)),var(--surface);border-color:rgba(0,229,204,.3)">
+        <h4>Order PCBs</h4>
+        <p style="font-size:.9rem;margin-bottom:16px">Upload Gerbers and get an instant quote.</p>
+        <a href="../../index.html#quote" class="btn btn-primary" style="width:100%;justify-content:center;font-size:.88rem">Get Instant Quote →</a>
+      </div>
+    </aside>
+  </div>
+
+  <div class="post-nav">
+    <a href="first-footprint-tutorial.html" class="post-nav-item prev"><div class="dir">← Previous Post</div><div class="nav-title">Your First PCB Footprint in Chipkraft</div></a>
+    <a href="bga-vs-qfn.html" class="post-nav-item next"><div class="dir">Next Post →</div><div class="nav-title">BGA vs QFN Package Guide</div></a>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand"><a class="logo" href="../../index.html"><span class="diamond"></span> ChipKraft</a><p>Chipkraft — Build with Precision.</p></div>
+      <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="../../index.html">Home</a></li><li><a href="../../index.html#builder">Footprint Builder</a></li><li><a href="../../index.html#manufacturing">PCB Manufacturing</a></li></ul></div>
+      <div class="footer-col"><h4>Blog</h4><ul><li><a href="../index.html">All Articles</a></li></ul></div>
+      <div class="footer-col"><h4>Resources</h4><ul><li><a href="../index.html">Blog</a></li><li><a href="#">Documentation</a></li><li><a href="../../index.html#contact">Contact</a></li></ul></div>
+      <div class="footer-col"><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><span>© 2025 Chipkraft. All rights reserved.</span><span>Made with <span class="heart">♥</span> for Engineers</span></div>
+  </div>
+</footer>
+<script>
+const nav = document.getElementById('nav');
+document.getElementById('hamburger').addEventListener('click', () => nav.classList.toggle('open'));
+document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+</script>
+</body>
+</html>
