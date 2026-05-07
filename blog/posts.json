@@ -1,1 +1,57 @@
+[
+  {
+    "id": "gan-power-electronics",
+    "title": "Why GaN is Reshaping Power Electronics in 2026",
+    "category": "Semiconductor",
+    "excerpt": "Gallium Nitride is unlocking smaller, cooler, faster power stages — here's what PCB designers need to know about layout, thermal management, and choosing GaN drivers.",
+    "date": "Apr 28, 2026",
+    "readTime": "6 min read",
+    "file": "posts/gan-power-electronics.html"
+  },
+  {
+    "id": "wizard-vs-freeform",
+    "title": "From Wizard to Freeform: Choosing the Right Footprint Workflow",
+    "category": "EDA Tools",
+    "excerpt": "A practical comparison of guided footprint builders versus full freeform editors, with real-world examples from QFN to BGA packages.",
+    "date": "Apr 18, 2026",
+    "readTime": "8 min read",
+    "file": "posts/wizard-vs-freeform.html"
+  },
+  {
+    "id": "surface-finish-guide",
+    "title": "HASL vs ENIG vs OSP: Picking the Right Surface Finish",
+    "category": "Manufacturing",
+    "excerpt": "Surface finish affects solderability, shelf life and cost. We break down the trade-offs for prototype and production runs.",
+    "date": "Apr 04, 2026",
+    "readTime": "5 min read",
+    "file": "posts/surface-finish-guide.html"
+  },
+  {
+    "id": "first-footprint-tutorial",
+    "title": "Getting Started: Your First PCB Footprint in Chipkraft",
+    "category": "Tutorial",
+    "excerpt": "Step-by-step guide to creating your first IPC-standard footprint using the Wizard Builder — from pin count to exported KiCad file.",
+    "date": "Mar 22, 2026",
+    "readTime": "10 min read",
+    "file": "posts/first-footprint-tutorial.html"
+  },
+  {
+    "id": "gerber-files-guide",
+    "title": "Understanding Gerber Files: What You Need to Send to Your Fab",
+    "category": "Manufacturing",
+    "excerpt": "A complete breakdown of the Gerber file set — copper layers, drill files, board outline, solder mask, and silkscreen — and how to export them correctly.",
+    "date": "Mar 10, 2026",
+    "readTime": "7 min read",
+    "file": "posts/gerber-files-guide.html"
+  },
+  {
+    "id": "bga-vs-qfn",
+    "title": "BGA vs QFN: Package Selection for High-Frequency Designs",
+    "category": "Semiconductor",
+    "excerpt": "Ball grid array vs quad flat no-lead — thermal, signal integrity, and assembly trade-offs explained for RF and high-speed digital design.",
+    "date": "Feb 28, 2026",
+    "readTime": "9 min read",
+    "file": "posts/bga-vs-qfn.html"
+  }
+]
 
