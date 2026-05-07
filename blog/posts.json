@@ -1,14 +1,5 @@
 [
   {
-    "id": "test-blog-post",
-    "title": "This is My Test Blog Post",
-    "category": "Tutorial",
-    "excerpt": "This is a test post to check if the JSON blog system is working correctly. If you can see this card on the blog page, everything is working!",
-    "date": "May 07, 2026",
-    "readTime": "1 min read",
-    "file": "posts/gan-power-electronics.html"
-  },
-  {
     "id": "gan-power-electronics",
     "title": "Why GaN is Reshaping Power Electronics in 2026",
     "category": "Semiconductor",
