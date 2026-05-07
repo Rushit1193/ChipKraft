@@ -35,30 +35,55 @@
 
 /* Blog grid */
 .blog-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:48px}
+
+/* Cards — start hidden, JS adds .visible to animate in */
 .blog-card{
   background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
-  padding:26px 24px;transition:transform .25s,box-shadow .25s,border-color .25s;
+  padding:26px 24px;
   display:flex;flex-direction:column;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .6s ease, transform .6s ease, box-shadow .25s, border-color .25s;
 }
-.blog-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px -18px rgba(0,229,204,.35);border-color:rgba(0,229,204,.3)}
-.blog-card h3{font-size:1.05rem;margin-bottom:10px;line-height:1.35}
-.blog-card .excerpt{font-size:.92rem;margin-bottom:16px;flex:1}
+.blog-card.visible{opacity:1;transform:none;}
+.blog-card:hover{transform:translateY(-4px) !important;box-shadow:0 14px 40px -18px rgba(0,229,204,.35);border-color:rgba(0,229,204,.3)}
+.blog-card h3{font-size:1.05rem;margin-bottom:10px;line-height:1.35;color:var(--heading);font-family:var(--font-mono);}
+.blog-card .excerpt{font-size:.92rem;margin-bottom:16px;flex:1;color:var(--text-muted)}
 .blog-meta{font-size:.78rem;color:var(--text-muted);font-family:var(--font-mono);margin-top:auto;padding-top:14px;border-top:1px dashed var(--border);display:flex;justify-content:space-between;align-items:center}
-.read-more{color:var(--accent);font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:4px;transition:gap .2s}
+.read-more{color:var(--accent);font-weight:600;font-size:.88rem;display:inline-flex;align-items:center;gap:4px;transition:gap .2s;margin-bottom:8px;}
 .read-more:hover{gap:8px}
+.blog-card[data-cat].hidden{display:none !important}
 
-/* Featured post (first post wider) */
-.blog-card.featured{grid-column:span 3;display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;background:linear-gradient(135deg,rgba(0,229,204,.07),rgba(0,229,204,.01)),var(--surface);border-color:rgba(0,229,204,.3);}
+/* Featured card */
+.blog-card.featured{
+  grid-column:span 3;
+  display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;
+  background:linear-gradient(135deg,rgba(0,229,204,.07),rgba(0,229,204,.01)),var(--surface);
+  border-color:rgba(0,229,204,.3);
+}
 .blog-card.featured .card-content{display:flex;flex-direction:column;height:100%}
 .blog-card.featured h3{font-size:1.4rem;margin-bottom:14px}
 .blog-card.featured .excerpt{font-size:1rem}
-.featured-label{font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;color:var(--amber);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:16px;}
-.featured-visual{background:rgba(0,229,204,.05);border:1px solid var(--border);border-radius:12px;height:200px;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);color:var(--accent);font-size:3rem;}
+.featured-label{
+  font-family:var(--font-mono);font-size:.72rem;letter-spacing:.08em;
+  color:var(--amber);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);
+  padding:4px 10px;border-radius:6px;display:inline-block;margin-bottom:16px;
+}
+.featured-visual{
+  background:rgba(0,229,204,.05);border:1px solid var(--border);border-radius:12px;
+  height:200px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--font-mono);color:var(--accent);font-size:3rem;
+}
 
-/* No-JS fallback: all cards visible */
-.blog-card{display:flex}
-.blog-card[data-cat].hidden{display:none}
+/* Loading skeletons */
+.skeleton-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:26px 24px;display:flex;flex-direction:column;gap:14px;}
+.skeleton-line{border-radius:6px;background:linear-gradient(90deg,var(--border) 25%,var(--border-2) 50%,var(--border) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
+/* Empty state */
+.empty-state{grid-column:span 3;text-align:center;padding:60px 20px;color:var(--text-muted);font-family:var(--font-mono);font-size:.9rem;}
+.empty-state .icon{font-size:2.5rem;margin-bottom:14px;opacity:.5}
+
+/* Pagination */
 .pagination{display:flex;gap:10px;justify-content:center;margin-top:8px}
 .pagination a{width:40px;height:40px;border-radius:10px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.88rem;color:var(--text-muted);transition:all .2s;}
 .pagination a:hover,.pagination a.active{border-color:var(--accent);color:var(--accent);background:rgba(0,229,204,.08);}
@@ -67,10 +92,12 @@
   .blog-grid{grid-template-columns:1fr 1fr}
   .blog-card.featured{grid-column:span 2;grid-template-columns:1fr}
   .featured-visual{display:none}
+  .empty-state{grid-column:span 2}
 }
 @media(max-width:600px){
   .blog-grid{grid-template-columns:1fr}
   .blog-card.featured{grid-column:span 1}
+  .empty-state{grid-column:span 1}
 }
 </style>
 </head>
@@ -118,81 +145,35 @@
       <button class="filter-btn" data-filter="Tutorial">Tutorial</button>
     </div>
 
-    <!-- Blog Grid -->
-    <!-- =====================================================================
-         HOW TO ADD A NEW BLOG POST:
-         1. Create a new .html file in blog/posts/ (copy template-post.html)
-         2. Add a new <article> block below following the pattern
-         3. Set data-cat to one of: Semiconductor | EDA Tools | Manufacturing | Tutorial
-         4. Update the href to point to your new file
-         ===================================================================== -->
+    <!-- Blog Grid — powered by posts.json -->
     <div class="blog-grid" id="blogGrid">
+      <!-- Skeleton placeholders shown while JSON loads -->
+      <div class="skeleton-card">
+        <div class="skeleton-line" style="height:12px;width:40%"></div>
+        <div class="skeleton-line" style="height:20px;width:90%"></div>
+        <div class="skeleton-line" style="height:14px;width:85%"></div>
+        <div class="skeleton-line" style="height:14px;width:70%"></div>
+        <div class="skeleton-line" style="height:12px;width:50%;margin-top:8px"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line" style="height:12px;width:45%"></div>
+        <div class="skeleton-line" style="height:20px;width:88%"></div>
+        <div class="skeleton-line" style="height:14px;width:80%"></div>
+        <div class="skeleton-line" style="height:14px;width:65%"></div>
+        <div class="skeleton-line" style="height:12px;width:50%;margin-top:8px"></div>
+      </div>
+      <div class="skeleton-card">
+        <div class="skeleton-line" style="height:12px;width:35%"></div>
+        <div class="skeleton-line" style="height:20px;width:92%"></div>
+        <div class="skeleton-line" style="height:14px;width:78%"></div>
+        <div class="skeleton-line" style="height:14px;width:60%"></div>
+        <div class="skeleton-line" style="height:12px;width:50%;margin-top:8px"></div>
+      </div>
+    </div>
 
-      <!-- FEATURED POST -->
-      <article class="blog-card featured reveal" data-cat="Semiconductor">
-        <div class="featured-visual">⚡</div>
-        <div class="card-content">
-          <span class="featured-label">FEATURED</span>
-          <span class="cat-badge">Semiconductor</span>
-          <h3>Why GaN is Reshaping Power Electronics in 2026</h3>
-          <p class="excerpt">Gallium Nitride is unlocking smaller, cooler, faster power stages — here's what PCB designers need to know about layout, thermal management, and choosing GaN drivers.</p>
-          <a href="posts/gan-power-electronics.html" class="read-more">Read Full Article →</a>
-          <div class="blog-meta"><span>Apr 28, 2026</span><span>6 min read</span></div>
-        </div>
-      </article>
-
-      <!-- POST 2 -->
-      <article class="blog-card reveal" data-cat="EDA Tools">
-        <span class="cat-badge">EDA Tools</span>
-        <h3>From Wizard to Freeform: Choosing the Right Footprint Workflow</h3>
-        <p class="excerpt">A practical comparison of guided footprint builders versus full freeform editors, with real-world examples from QFN to BGA packages.</p>
-        <a href="posts/wizard-vs-freeform.html" class="read-more">Read More →</a>
-        <div class="blog-meta"><span>Apr 18, 2026</span><span>8 min read</span></div>
-      </article>
-
-      <!-- POST 3 -->
-      <article class="blog-card reveal" data-cat="Manufacturing">
-        <span class="cat-badge">Manufacturing</span>
-        <h3>HASL vs ENIG vs OSP: Picking the Right Surface Finish</h3>
-        <p class="excerpt">Surface finish affects solderability, shelf life and cost. We break down the trade-offs for prototype and production runs.</p>
-        <a href="posts/surface-finish-guide.html" class="read-more">Read More →</a>
-        <div class="blog-meta"><span>Apr 04, 2026</span><span>5 min read</span></div>
-      </article>
-
-      <!-- POST 4 -->
-      <article class="blog-card reveal" data-cat="Tutorial">
-        <span class="cat-badge">Tutorial</span>
-        <h3>Getting Started: Your First PCB Footprint in Chipkraft</h3>
-        <p class="excerpt">Step-by-step guide to creating your first IPC-standard footprint using the Wizard Builder — from pin count to exported KiCad file.</p>
-        <a href="posts/first-footprint-tutorial.html" class="read-more">Read More →</a>
-        <div class="blog-meta"><span>Mar 22, 2026</span><span>10 min read</span></div>
-      </article>
-
-      <!-- POST 5 -->
-      <article class="blog-card reveal" data-cat="Manufacturing">
-        <span class="cat-badge">Manufacturing</span>
-        <h3>Understanding Gerber Files: What You Need to Send to Your Fab</h3>
-        <p class="excerpt">A complete breakdown of the Gerber file set — copper layers, drill files, board outline, solder mask, and silkscreen — and how to export them correctly.</p>
-        <a href="posts/gerber-files-guide.html" class="read-more">Read More →</a>
-        <div class="blog-meta"><span>Mar 10, 2026</span><span>7 min read</span></div>
-      </article>
-
-      <!-- POST 6 -->
-      <article class="blog-card reveal" data-cat="Semiconductor">
-        <span class="cat-badge">Semiconductor</span>
-        <h3>BGA vs QFN: Package Selection for High-Frequency Designs</h3>
-        <p class="excerpt">Ball grid array vs quad flat no-lead — thermal, signal integrity, and assembly trade-offs explained for RF and high-speed digital design.</p>
-        <a href="posts/bga-vs-qfn.html" class="read-more">Read More →</a>
-        <div class="blog-meta"><span>Feb 28, 2026</span><span>9 min read</span></div>
-      </article>
-
-    </div><!-- /blog-grid -->
-
-    <!-- Pagination (add more pages as your blog grows) -->
-    <div class="pagination">
+    <!-- Pagination -->
+    <div class="pagination" id="pagination" style="display:none">
       <a href="#" class="active">1</a>
-      <a href="#">2</a>
-      <a href="#">→</a>
     </div>
 
   </div>
@@ -231,32 +212,115 @@
 </footer>
 
 <script>
-// Hamburger
+// ── Hamburger ──────────────────────────────────────────────────────────────
 const nav = document.getElementById('nav');
 document.getElementById('hamburger').addEventListener('click', () => nav.classList.toggle('open'));
 document.querySelectorAll('.nav-links a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
 
-// Category filter
+// ── State ──────────────────────────────────────────────────────────────────
+let allPosts = [];
+let activeFilter = 'all';
+
+// Icon shown in the featured card visual panel
+const catIcons = {
+  'Semiconductor' : '⚡',
+  'EDA Tools'     : '✦',
+  'Manufacturing' : '⚙',
+  'Tutorial'      : '📖',
+};
+
+// ── Build HTML for the featured (first) card ───────────────────────────────
+function buildFeaturedCard(post) {
+  const icon = catIcons[post.category] || '📄';
+  return `
+    <article class="blog-card featured" data-cat="${post.category}">
+      <div class="featured-visual">${icon}</div>
+      <div class="card-content">
+        <span class="featured-label">FEATURED</span>
+        <span class="cat-badge">${post.category}</span>
+        <h3>${post.title}</h3>
+        <p class="excerpt">${post.excerpt}</p>
+        <a href="${post.file}" class="read-more">Read Full Article →</a>
+        <div class="blog-meta">
+          <span>${post.date}</span><span>${post.readTime}</span>
+        </div>
+      </div>
+    </article>`;
+}
+
+// ── Build HTML for a regular card ─────────────────────────────────────────
+function buildCard(post) {
+  return `
+    <article class="blog-card" data-cat="${post.category}">
+      <span class="cat-badge">${post.category}</span>
+      <h3>${post.title}</h3>
+      <p class="excerpt">${post.excerpt}</p>
+      <a href="${post.file}" class="read-more">Read More →</a>
+      <div class="blog-meta">
+        <span>${post.date}</span><span>${post.readTime}</span>
+      </div>
+    </article>`;
+}
+
+// ── Render filtered posts into grid ───────────────────────────────────────
+function renderPosts(filter) {
+  const grid = document.getElementById('blogGrid');
+  const filtered = filter === 'all'
+    ? allPosts
+    : allPosts.filter(p => p.category === filter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🔍</div>
+        No posts in this category yet — check back soon!
+      </div>`;
+    document.getElementById('pagination').style.display = 'none';
+    return;
+  }
+
+  // First post = featured wide card, rest = regular cards
+  grid.innerHTML = filtered
+    .map((post, i) => i === 0 ? buildFeaturedCard(post) : buildCard(post))
+    .join('');
+
+  // Staggered fade-in animation for each card
+  grid.querySelectorAll('.blog-card').forEach((card, i) => {
+    setTimeout(() => card.classList.add('visible'), i * 90);
+  });
+
+  // Show pagination only when there are more than 6 posts
+  document.getElementById('pagination').style.display =
+    filtered.length > 6 ? 'flex' : 'none';
+}
+
+// ── Category filter buttons ────────────────────────────────────────────────
 document.querySelectorAll('.filter-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    const cat = btn.dataset.filter;
-    document.querySelectorAll('.blog-card').forEach(card => {
-      if (cat === 'all' || card.dataset.cat === cat) {
-        card.classList.remove('hidden');
-      } else {
-        card.classList.add('hidden');
-      }
-    });
+    activeFilter = btn.dataset.filter;
+    renderPosts(activeFilter);
   });
 });
 
-// Reveal on scroll
-const obs = new IntersectionObserver((entries) => {
-  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
-}, { threshold: 0.1 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+// ── Fetch posts.json and render ───────────────────────────────────────────
+fetch('posts.json')
+  .then(res => {
+    if (!res.ok) throw new Error('posts.json not found');
+    return res.json();
+  })
+  .then(posts => {
+    allPosts = posts;
+    renderPosts(activeFilter);
+  })
+  .catch(() => {
+    document.getElementById('blogGrid').innerHTML = `
+      <div class="empty-state">
+        <div class="icon">⚠️</div>
+        Could not load posts. Make sure <strong>blog/posts.json</strong> exists in your repository.
+      </div>`;
+  });
 </script>
 </body>
 </html>
